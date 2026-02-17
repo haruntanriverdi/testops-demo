@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chrome-node
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chrome-node
+  template:
+    metadata:
+      labels:
+        app: chrome-node
+    spec:
+      volumes:
+      - name: dshm
+        emptyDir:
+          medium: Memory
+          sizeLimit: "256Mi"
+      containers:
+      - name: chrome
+        image: selenium/standalone-chrome:4.27
+        ports:
+        - containerPort: 4444
+        volumeMounts:
+        - name: dshm
+          mountPath: /dev/shm
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "768Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chrome-node
+spec:
+  selector:
+    app: chrome-node
+  ports:
+  - port: 4444
+    targetPort: 4444

@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: test-controller
+spec:
+  backoffLimit: 2
+  template:
+    metadata:
+      labels:
+        app: test-controller
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: controller
+        image: 832721536519.dkr.ecr.eu-north-1.amazonaws.com/testops/test-controller:latest
+        env:
+        - name: SELENIUM_HUB
+          value: "http://chrome-node:4444"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"

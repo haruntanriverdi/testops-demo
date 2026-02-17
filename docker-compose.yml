@@ -1,0 +1,19 @@
+services:
+  chrome-node:
+    image: seleniarm/standalone-chromium:latest
+    ports:
+      - "4444:4444"
+    shm_size: "2g"
+    healthcheck:
+      test: curl -f http://localhost:4444/status || exit 1
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  test-controller:
+    build: .
+    depends_on:
+      chrome-node:
+        condition: service_healthy
+    environment:
+      - SELENIUM_HUB=http://chrome-node:4444
